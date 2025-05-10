@@ -3,3 +3,4 @@ dotenv
 replicate
 elevenlabs
 moviepy
+litellm
