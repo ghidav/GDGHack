@@ -4,7 +4,8 @@ import re
 from dotenv import load_dotenv
 
 from agents import Agent, UserAgent, INTERACTION_PROTOCOL
-from quiz import make_quiz
+from quiz import run_quiz
+from critical_thinking import run_critical_thinking_exercise
 
 load_dotenv()
 
@@ -22,14 +23,13 @@ NUM_QUESTIONS = 3
 
 # Initialize the agents
 teacher_base_prompt = "You are a teacher in a {subject} class."
-student_agent_configs = {
-    "student_a": f"You are an enthusiastic student named EagerStudent. You are knowledgeable about {SUBJECT}. Provide thorough and enthusiastic answers to the teacher's questions.",
-    "student_b": f"You are a knowledgeable but quiet and concise student named QuietStudent. You know a lot about {SUBJECT}. Provide accurate but brief answers.",
+student_agent_instructions = {
+    "Marc": f"You are an enthusiastic funny student named Marc. Provide funny (and sometimes wrong...) answers to the teacher's questions. Use emojis and humor.",
+    "Paola": f"You are a knowledgeable but quiet and concise student named Paola. Provide accurate but brief answers.",
 }
-student_base_prompt = "You are a student in a {subject} class."
 
 agents = {}
-all_student_names = list(student_agent_configs.keys()) + ["student_c"]
+all_student_names = list(student_agent_instructions.keys()) + ["David"]
 
 # Initialize Teacher Agent
 agents["teacher"] = Agent(
@@ -43,7 +43,7 @@ teacher_protocol = INTERACTION_PROTOCOL.format(
 agents["teacher"].update_system_prompt_with_protocol(teacher_protocol)
 
 # Initialize AI Student Agents
-for name, instruction in student_agent_configs.items():
+for name, instruction in student_agent_instructions.items():
     agents[name] = Agent(name=name, client=client, model=MODEL, instruction=instruction)
     # Students should know about the teacher and other students
     student_sees_others = ["teacher"] + [
@@ -55,18 +55,19 @@ for name, instruction in student_agent_configs.items():
     agents[name].update_system_prompt_with_protocol(student_protocol)
 
 # Initialize User-controlled Student Agent
-agents["student_c"] = UserAgent(
-    name="student_c",
-    instruction=f"You are {"student_c"}, a student in a {SUBJECT} class.",
+agents["David"] = UserAgent(
+    name="David",
+    instruction=f"You are {"David"}, a student in a {SUBJECT} class.",
 )
 
-user_sees_others = ["teacher"] + list(student_agent_configs.keys())
+user_sees_others = ["teacher"] + list(student_agent_instructions.keys())
 
 user_protocol = INTERACTION_PROTOCOL.format(other_agents=", ".join(user_sees_others))
 
-agents["student_c"].update_system_prompt_with_protocol(
+agents["David"].update_system_prompt_with_protocol(
     user_protocol
 )  # UserAgent can just print this if desired
 
 
-make_quiz(agents, SUBJECT, NUM_QUESTIONS, all_student_names)
+# run_quiz(agents, SUBJECT, NUM_QUESTIONS, all_student_names)
+run_critical_thinking_exercise(agents, SUBJECT, all_student_names)

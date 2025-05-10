@@ -1,7 +1,6 @@
 from agents import Agent, UserAgent
 
-
-def make_quiz(agents, subject, num_questions, all_student_names):
+def run_quiz(agents, subject, num_questions, all_student_names):
 
     NUM_QUESTIONS = num_questions
     SUBJECT = subject

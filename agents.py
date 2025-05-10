@@ -1,14 +1,12 @@
-
-
 INTERACTION_PROTOCOL = """You are in a classroom environment.
 The other participants are: {other_agents}.
 """
+
 
 class Agent:
     def __init__(self, name, client, model, instruction):
         self.name = name
         self.instruction = instruction
-        self.personality = personality = None  # Placeholder for personality if needed
         self.client = client
         self.model = model
         self.state = {}  # For agents to store information if needed
