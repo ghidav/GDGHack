@@ -22,14 +22,18 @@ NUM_QUESTIONS = 3
 
 # Initialize the agents
 teacher_base_prompt = "You are a teacher in a {subject} class."
-student_agent_configs = {
+student_agent_instructions = {
     "student_a": f"You are an enthusiastic student named EagerStudent. You are knowledgeable about {SUBJECT}. Provide thorough and enthusiastic answers to the teacher's questions.",
     "student_b": f"You are a knowledgeable but quiet and concise student named QuietStudent. You know a lot about {SUBJECT}. Provide accurate but brief answers.",
+}
+student_agent_personalities = {
+    "student_a": "enthusiastic",
+    "student_b": "concise",
 }
 student_base_prompt = "You are a student in a {subject} class."
 
 agents = {}
-all_student_names = list(student_agent_configs.keys()) + ["student_c"]
+all_student_names = list(student_agent_instructions.keys()) + ["student_c"]
 
 # Initialize Teacher Agent
 agents["teacher"] = Agent(
@@ -43,7 +47,7 @@ teacher_protocol = INTERACTION_PROTOCOL.format(
 agents["teacher"].update_system_prompt_with_protocol(teacher_protocol)
 
 # Initialize AI Student Agents
-for name, instruction in student_agent_configs.items():
+for name, instruction in student_agent_instructions.items():
     agents[name] = Agent(name=name, client=client, model=MODEL, instruction=instruction)
     # Students should know about the teacher and other students
     student_sees_others = ["teacher"] + [
@@ -60,7 +64,7 @@ agents["student_c"] = UserAgent(
     instruction=f"You are {"student_c"}, a student in a {SUBJECT} class.",
 )
 
-user_sees_others = ["teacher"] + list(student_agent_configs.keys())
+user_sees_others = ["teacher"] + list(student_agent_instructions.keys())
 
 user_protocol = INTERACTION_PROTOCOL.format(other_agents=", ".join(user_sees_others))
 
