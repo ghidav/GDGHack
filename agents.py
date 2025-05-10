@@ -4,16 +4,19 @@ The other participants are: {other_agents}.
 
 
 class Agent:
-    def __init__(self, name, client, model, instruction):
+    def __init__(self, name, client, model, instruction, personality):
         self.name = name
         self.instruction = instruction
         self.client = client
         self.model = model
         self.state = {}  # For agents to store information if needed
+
+        # Initialize messages with system prompt.
+        system_prompt = f"{self.instruction}\n\n{self.personality}"
         self.messages = [
             {
                 "role": "system",
-                "content": instruction,
+                "content": system_prompt,
             }
         ]
         self.other_agents = []

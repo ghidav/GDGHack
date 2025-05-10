@@ -1,4 +1,4 @@
-from agents import Agent, UserAgent
+from agents import Agent
 
 def run_quiz(agents, subject, num_questions, all_student_names):
 
