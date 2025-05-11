@@ -1,7 +1,7 @@
 from agents import Agent
+import json  # Added import
 
-
-def run_quiz(agents, subject, num_questions, all_student_names):
+def run_quiz(agents, subject, num_questions, all_student_names, user_name):
 
     NUM_QUESTIONS = num_questions
     SUBJECT = subject
@@ -11,15 +11,14 @@ def run_quiz(agents, subject, num_questions, all_student_names):
 1.  When prompted for 'Question X', formulate a distinct question about {SUBJECT}. Your response should ONLY be the question itself.
 2.  You will then receive the answers from all students for that question.
 3.  This will repeat for {NUM_QUESTIONS} questions.
-4.  After all questions are answered, you will be prompted to provide a final ranking.
-Based on all answers collected (which will be provided to you), rank the students ({', '.join(all_student_names)}) from 1st to 3rd.
-Explain your ranking briefly. Start your ranking response *exactly* with "Final Ranking:".
+4.  After all questions are answered, you will be prompted to provide a final feedback.
+Based on all answers collected (which will be provided to you), provide constructive feedback to each student.".
 """
 
     # --- Orchestration Logic ---
     max_turns = (
         (NUM_QUESTIONS * (1 + len(all_student_names))) + 2 + NUM_QUESTIONS
-    )  # Teacher Q + Student Ans + Teacher receives ans + Final Ranking
+    )  # Teacher Q + Student Ans + Teacher receives ans + Final feedback
     current_turn = 0
 
     all_answers_collected = {}  # To store {q_num: {student_name: answer}}
@@ -82,25 +81,49 @@ Explain your ranking briefly. Start your ranking response *exactly* with "Final 
             )
             break
 
-    # 3. After all questions, ask Teacher for ranking
+    # 3. After all questions, ask Teacher for feedback
     if current_turn < max_turns:
         current_turn += 1
-        print(f"--- Turn {current_turn}: Teacher to provide final ranking ---")
+        print(f"--- Turn {current_turn}: Teacher to provide feedback ---")
 
-        ranking_prompt_parts = [
-            "All questions have been answered. Please provide your final ranking."
+        feedback_prompt_parts = [
+            "All questions have been answered. Please provide constructive feedback to the students."
         ]
         for q_idx in range(1, NUM_QUESTIONS + 1):
-            ranking_prompt_parts.append(f"\nAnswers for Question {q_idx}:")
+            feedback_prompt_parts.append(f"\nAnswers for Question {q_idx}:")
             for student_name, answer in all_answers_collected.get(q_idx, {}).items():
-                ranking_prompt_parts.append(f"- {student_name}: {answer}")
+                feedback_prompt_parts.append(f"- {student_name}: {answer}")
 
-        ranking_prompt = "\n".join(ranking_prompt_parts)
-        ranking_prompt += f"\n\nBased on these answers, rank {', '.join(all_student_names)} (1st, 2nd, 3rd) and briefly explain. Start your response *exactly* with 'Final Ranking:'."
+        feedback_prompt = "\n".join(feedback_prompt_parts)
+        feedback_prompt += f"\n\nBased on these answers, provide constructive feedback for the students {', '.join(all_student_names)}. Make your response as a json object with the name of the student as key and the feedback as value."
 
-        final_ranking_response = agents["teacher"].chat(ranking_prompt)
+        final_feedback_response = agents["teacher"].chat(feedback_prompt)
+        print(f"\n--- Feedback from teacher ---")
+        print(final_feedback_response)
 
-        print(f"\n--- Final Ranking from teacher ---")
-        print(final_ranking_response)
+        # Parse the feedback response
+        feedback_json = {}  # Initialize with an empty dict
+        try:
+            # Try to find the JSON object within the response string
+            # LLMs can sometimes add introductory text or markdown backticks
+            json_start_index = final_feedback_response.find('{')
+            json_end_index = final_feedback_response.rfind('}')
 
-    print("\n--- Classroom Session Ended ---")
+            if json_start_index != -1 and json_end_index != -1 and json_start_index < json_end_index:
+                json_string = final_feedback_response[json_start_index : json_end_index+1]
+                # Attempt to parse the extracted string as JSON
+                parsed_object = json.loads(json_string)
+                if isinstance(parsed_object, dict):
+                    feedback_json = parsed_object
+                    print("Feedback JSON parsed successfully.")
+                else:
+                    print(f"Parsed object is not a dictionary, but a {type(parsed_object)}.")
+            else:
+                print("Could not find a JSON object structure (e.g. '{...}') in the response.")
+
+        except json.JSONDecodeError as e:
+            print(f"Error decoding feedback JSON: {e}. Response was: {final_feedback_response}")
+        except Exception as e:
+            print(f"An unexpected error occurred during feedback parsing: {e}")
+
+        return feedback_json

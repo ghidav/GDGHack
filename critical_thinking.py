@@ -1,4 +1,5 @@
 from agents import Agent, UserAgent # Assuming Agent and UserAgent are in agents.py
+import json
 
 def run_critical_thinking_exercise(agents, subject, all_student_names):
     """
@@ -6,7 +7,7 @@ def run_critical_thinking_exercise(agents, subject, all_student_names):
     1. Teacher poses a critical thinking question.
     2. Students answer the question.
     3. Students elaborate on another student's answer.
-    4. Teacher provides a wrap-up and feedback.
+    4. Teacher provides constructive feedback.
     """
     SUBJECT = subject
     num_students = len(all_student_names)
@@ -108,12 +109,37 @@ What are your thoughts on {elaborated_on_student_name}'s perspective? Please ela
         text = elaboration_data["elaboration_text"]
         feedback_prompt_parts.append(f"- {elaborator_name} (elaborating on {elaborated_on}'s answer): {text}")
     
-    feedback_prompt_parts.append(f"\n\nPlease provide your wrap-up and constructive feedback now. Remember to start your response *exactly* with 'Final Wrap-up and Feedback:'.")
+    feedback_prompt_parts.append(f"\n\nPlease provide constructive feedback for each student now. Make your response as a json object with the name of the student as key and the feedback as value.")
 
     final_feedback_prompt = "\n".join(feedback_prompt_parts)
-    final_feedback = teacher_agent.chat(final_feedback_prompt)
+    final_feedback_response = teacher_agent.chat(final_feedback_prompt)
 
     print(f"\n--- Final Wrap-up and Feedback from Teacher ---")
-    print(final_feedback)
+    print(final_feedback_response)
 
-    print("\n--- Critical Thinking Exercise Ended ---")
+    # Parse the feedback response
+    feedback_json = {}  # Initialize with an empty dict
+    try:
+        # Try to find the JSON object within the response string
+        # LLMs can sometimes add introductory text or markdown backticks
+        json_start_index = final_feedback_response.find('{')
+        json_end_index = final_feedback_response.rfind('}')
+
+        if json_start_index != -1 and json_end_index != -1 and json_start_index < json_end_index:
+            json_string = final_feedback_response[json_start_index : json_end_index+1]
+            # Attempt to parse the extracted string as JSON
+            parsed_object = json.loads(json_string)
+            if isinstance(parsed_object, dict):
+                feedback_json = parsed_object
+                print("Feedback JSON parsed successfully.")
+            else:
+                print(f"Parsed object is not a dictionary, but a {type(parsed_object)}.")
+        else:
+            print("Could not find a JSON object structure (e.g. '{...}') in the response.")
+
+    except json.JSONDecodeError as e:
+        print(f"Error decoding feedback JSON: {e}. Response was: {final_feedback_response}")
+    except Exception as e:
+        print(f"An unexpected error occurred during feedback parsing: {e}")
+
+    return feedback_json

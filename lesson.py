@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from agents import Agent, UserAgent, INTERACTION_PROTOCOL
 from quiz import run_quiz
 from critical_thinking import run_critical_thinking_exercise
+from report_generator import generate_report # Import the report generator
 
 load_dotenv()
 
@@ -23,8 +24,8 @@ MODEL = "google/gemini-2.5-flash-preview"  # You can change this
 SUBJECT = "First Industrial Revolution"
 TOPIC = "The Invention of the Steam Engine"
 STYLE = "Visual and Auditory"
-NUM_FOCAL_POINTS = 3
-NUM_QUESTIONS = 3
+NUM_FOCAL_POINTS = 2
+NUM_QUESTIONS = 1
 
 # --- Initialize the agents
 student_agent_instructions = {
@@ -123,7 +124,7 @@ print(f"Teacher: {example}\n")
 
 
 # 3. For each focal point, generate a description and a media content
-for focal_point in focal_points:
+for i, focal_point in enumerate(focal_points):
     # 3.1 Generate a description
     description = agents["teacher"].chat(
         f"Generate a short description of the focal point: {focal_point}. Don't mention students at this point."
@@ -131,21 +132,35 @@ for focal_point in focal_points:
     print(f"Teacher: {description}\n")
 
     # 3.2 Generate media content
-    media_content = agents["teacher"].chat(
-        f"If you could generate a media content (image, audio, animation, web) related to the focal point: {focal_point} based on the {STYLE} learning style, which one would it be? Output a json object with the following keys: 'type' (image, audio, animation, web), 'content' (the content itself), and 'description' (a brief description of the content)."
-    )
-    print(f"Teacher: {media_content}\n")
+    # media_content = agents["teacher"].chat(
+    #     f"If you could generate a media content (image, audio, animation, web) related to the focal point: {focal_point} based on the {STYLE} learning style, which one would it be? Output a json object with the following keys: 'type' (image, audio, animation, web), 'content' (the content itself), and 'description' (a brief description of the content)."
+    # )
+    # print(f"Teacher: {media_content}\n")
 
     # 3.3 Generate a quiz or critical thinking exercise
     random_choice = random.choice(["quiz", "critical_thinking"])
     if random_choice == "quiz":
         print(f"Teacher: Generating a quiz for {focal_point}...\n")
-        run_quiz(agents, SUBJECT, NUM_QUESTIONS, all_student_names)
+        feedback_json = run_quiz(
+            agents, SUBJECT, NUM_QUESTIONS, all_student_names, "David"
+        )
+        user_specific_feedback = feedback_json.get(
+            "David", "No specific feedback found."
+        )
+        agents["teacher"].set_state(f"quiz_{i}_feedback", user_specific_feedback)
     else:
         print(
             f"Teacher: Generating a critical thinking exercise for {focal_point}...\n"
         )
-        run_critical_thinking_exercise(agents, SUBJECT, all_student_names)
+        feedback_json = run_critical_thinking_exercise(
+            agents, SUBJECT, all_student_names
+        )
+        user_specific_feedback = feedback_json.get(
+            "David", "No specific feedback found."
+        )
+        agents["teacher"].set_state(
+            f"critical_thinking_{i}_feedback", user_specific_feedback
+        )
 
     # 3.4 Clear the messages for the next focal point
     for agent in agents.values():
@@ -179,3 +194,19 @@ teacher_feedback = agents["teacher"].chat(
     f"Here are the answers from the students:\n\n{user_answers}\n\nPlease provide constructive feedback on the answers and a final ranking."
 )
 print(f"Teacher: {teacher_feedback}\n")
+agents["teacher"].set_state("final_test_feedback", teacher_feedback) # Store final test feedback
+
+# 5. Generate a report
+# Ensure fpdf2 is installed: pip install fpdf2
+generate_report(
+    teacher_state=agents["teacher"].state,
+    student_name="David", # Assuming the report is for David
+    subject=SUBJECT,
+    topic=TOPIC,
+    output_filename=f"David_{SUBJECT.replace(' ', '_')}_Report.pdf"
+)
+
+# print the final teacher state
+print("\nFinal Teacher State:")
+for key, value in agents["teacher"].state.items():
+    print(f"{key}: {value}")
