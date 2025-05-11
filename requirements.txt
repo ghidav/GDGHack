@@ -4,3 +4,6 @@ replicate
 elevenlabs
 moviepy
 litellm
+Flask
+fpdf2
+stremlit

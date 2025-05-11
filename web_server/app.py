@@ -48,7 +48,7 @@ SUBJECT = "The First Industrial Revolution"
 TOPIC = "The Invention of the Steam Engine and its Societal Impact"
 # MODEL_NAME = "google/gemini-flash-1.5" # Requires API key with access
 # MODEL_NAME = "mistralai/mistral-7b-instruct:free" # A free option
-MODEL_NAME = "nousresearch/nous-hermes-2-mixtral-8x7b-dpo" # A capable model on OpenRouter (check for free tier if needed)
+MODEL_NAME = "google/gemini-2.5-flash-preview" # A capable model on OpenRouter (check for free tier if needed)
 # MODEL_NAME = "openai/gpt-3.5-turbo" # Standard, might not be free on OpenRouter
 USER_AGENT_NAME = "User" # Define the user's agent name
 
@@ -111,8 +111,9 @@ def initialize_classroom_agents():
 
     with st.spinner("Setting up the AI classroom... Please wait."):
         student_agent_instructions = {
-            "Marc": f"You are an enthusiastic and humorous student named Marc in a class about {SUBJECT}. You often use emojis and try to be funny, even if your answers are sometimes a bit off-topic or creatively incorrect. Keep responses concise.",
-            "Paola": f"You are a highly knowledgeable, precise, and somewhat reserved student named Paola in a class about {SUBJECT}. Your answers are accurate, insightful, and directly address the question. You are polite but not overly talkative.",
+            "Marc": f"You are an enthusiastic and humorous student named Marc in a class about {SUBJECT}. You're an Emerging Mover which break the ice. You speak up first, offering initial ideas — even if rough or unpolished. Your value lies in creating momentum and encouraging others to react, refine, or build further. Keep responses concise. You use emojis to express your emotions",
+            "Paola": f"You are a knowledgeable student named Paola in a class about {SUBJECT}. You're a Reflective Bystanders observing before acting. You catch what others might miss and ensure shared understanding. Your quiet presence promotes thoughtful, inclusive learning. Keep responses concise. You use emojis to express your emotions",
+            "Alex": f"You are a curious student named Alex in a class about {SUBJECT}. You're a Selective Opposers challenging ideas with precision. You speak when you're confident, spotting flaws or offering sharper alternatives. Keep responses concise. You use emojis to express your emotions",
         }
         ai_student_names = list(student_agent_instructions.keys())
         all_participant_names = ai_student_names + [USER_AGENT_NAME]

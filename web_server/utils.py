@@ -111,11 +111,11 @@ def display_media_content(focal_point, index):
                 with col:
                     st.image(img_url,
                              caption=f"{image_caption_base} ({i+1})",
-                             use_container_width=True)
+                             use_column_width=True)
         else:
             st.image(selected_image_urls[0],
                      caption=image_caption_base,
-                     use_container_width=True)
+                     use_column_width=True)
 
     # Display additional media type based on focal point (SVGs or Timeline)
     if "steam" in fp_lower or "engine" in fp_lower:
@@ -128,10 +128,10 @@ def display_media_content(focal_point, index):
             <rect x="200" y="100" width="200" height="50" fill="#999" stroke="#000" stroke-width="2"/>
             <rect x="250" y="50" width="100" height="50" fill="#666" stroke="#000" stroke-width="2"/>
             <path d="M 270,50 Q 280,30 290,50" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2,2">
-                <animate attributeName="d" values="M 270,50 Q 280,30 290,50; M 270,50 Q 280,20 290,50; M 270,50 Q 280,30 290,50" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="d" values="M 270,50 Q 280,30 290,50; M 270,50 Q 280,15 290,50; M 270,50 Q 280,40 290,50; M 270,50 Q 280,30 290,50" dur="2.5s" repeatCount="indefinite"/>
             </path>
             <path d="M 320,50 Q 330,30 340,50" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2,2">
-                <animate attributeName="d" values="M 320,50 Q 330,30 340,50; M 320,50 Q 330,20 340,50; M 320,50 Q 330,30 340,50" dur="2.5s" repeatCount="indefinite"/>
+                <animate attributeName="d" values="M 320,50 Q 330,30 340,50; M 320,50 Q 330,10 340,50; M 320,50 Q 330,35 340,50; M 320,50 Q 330,30 340,50" dur="2s" repeatCount="indefinite"/>
             </path>
             <g id="wheel1_details_svg">
                 <circle cx="150" cy="200" r="40" fill="#444" stroke="#000" stroke-width="1"/>
@@ -143,8 +143,8 @@ def display_media_content(focal_point, index):
                 <line x1="450" y1="160" x2="450" y2="240" stroke="#222" stroke-width="3"/> <line x1="410" y1="200" x2="490" y2="200" stroke="#222" stroke-width="3"/>
                 <line x1="420" y1="170" x2="480" y2="230" stroke="#222" stroke-width="3"/> <line x1="420" y1="230" x2="480" y2="170" stroke="#222" stroke-width="3"/>
             </g>
-            <animateTransform xlink:href="#wheel1_details_svg" attributeName="transform" type="rotate" from="0 150 200" to="360 150 200" dur="4s" repeatCount="indefinite" />
-            <animateTransform xlink:href="#wheel2_details_svg" attributeName="transform" type="rotate" from="0 450 200" to="360 450 200" dur="4s" repeatCount="indefinite" />
+            <animateTransform xlink:href="#wheel1_details_svg" attributeName="transform" type="rotate" from="0 150 200" to="360 150 200" dur="3s" repeatCount="indefinite" />
+            <animateTransform xlink:href="#wheel2_details_svg" attributeName="transform" type="rotate" from="0 450 200" to="360 450 200" dur="3s" repeatCount="indefinite" />
             <text x="150" y="270" text-anchor="middle" fill="#333" font-family="Arial" font-size="12">Wheel</text>
             <text x="450" y="270" text-anchor="middle" fill="#333" font-family="Arial" font-size="12">Wheel</text>
             <text x="300" y="130" text-anchor="middle" fill="#333" font-family="Arial" font-size="12">Boiler</text>
@@ -164,20 +164,20 @@ def display_media_content(focal_point, index):
             <polygon points="50,100 300,30 550,100" fill="#8b5a2b" stroke="#000" stroke-width="2"/>
             <rect x="450" y="20" width="30" height="80" fill="#b47d49" stroke="#000" stroke-width="1"/>
             <path d="M 460,20 Q 470,0 480,20" fill="none" stroke="#aaa" stroke-width="3" stroke-dasharray="3,3">
-                <animate attributeName="d" values="M 460,20 Q 470,0 480,20; M 465,20 Q 490,-10 485,20; M 460,20 Q 470,0 480,20" dur="4s" repeatCount="indefinite"/>
+                <animate attributeName="d" values="M 460,20 Q 470,0 480,20; M 465,20 Q 490,-15 485,20; M 460,20 Q 470,5 480,20; M 460,20 Q 470,0 480,20" dur="3s" repeatCount="indefinite"/>
             </path>
             <path d="M 455,15 Q 440,-5 470,10" fill="none" stroke="#aaa" stroke-width="3" stroke-dasharray="3,3">
-                <animate attributeName="d" values="M 455,15 Q 440,-5 470,10; M 455,15 Q 430,-15 465,5; M 455,15 Q 440,-5 470,10" dur="5s" repeatCount="indefinite"/>
+                <animate attributeName="d" values="M 455,15 Q 440,-5 470,10; M 455,15 Q 430,-20 465,5;M 455,15 Q 445,0 470,15; M 455,15 Q 440,-5 470,10" dur="3.5s" repeatCount="indefinite"/>
             </path>
             <rect x="150" y="190" width="300" height="10" fill="#333" stroke="#000" stroke-width="1"/>
             <rect id="product1_svg" x="170" y="180" width="20" height="10" fill="#d9b38c" stroke="#000" stroke-width="1">
-                <animate attributeName="x" values="170; 430; 170" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="x" values="170; 430; 170" dur="6s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 0.5; 1" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
             </rect>
             <rect id="product2_svg" x="230" y="180" width="20" height="10" fill="#d9b38c" stroke="#000" stroke-width="1">
-                <animate attributeName="x" values="230; 490; 230" dur="8s" repeatCount="indefinite" begin="-2s"/>
+                <animate attributeName="x" values="230; 490; 230" dur="6s" repeatCount="indefinite" begin="-1.5s" calcMode="spline" keyTimes="0; 0.5; 1" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
             </rect>
             <rect id="product3_svg" x="310" y="180" width="20" height="10" fill="#d9b38c" stroke="#000" stroke-width="1">
-                <animate attributeName="x" values="310; 170; 310" dur="8s" repeatCount="indefinite" begin="-4s"/>
+                <animate attributeName="x" values="310; 170; 310" dur="6s" repeatCount="indefinite" begin="-3s" calcMode="spline" keyTimes="0; 0.5; 1" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
             </rect>
             <text x="300" y="280" text-anchor="middle" fill="#333" font-family="Arial" font-size="14">Mass Production Factory</text>
         </svg>

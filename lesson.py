@@ -18,7 +18,7 @@ client = OpenAI(
     api_key=getenv("OPENROUTER_API_KEY"),
 )
 
-MODEL = "google/gemini-2.5-flash-preview"  # You can change this
+MODEL = "google/gemini-2.5-flash-preview" 
 
 # Quiz parameters
 SUBJECT = "First Industrial Revolution"
