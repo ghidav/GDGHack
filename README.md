@@ -96,7 +96,7 @@ Here's how to get Synapser running on your local machine:
     * Make sure your virtual environment (`venv`) is still active.
     * Execute the following command in your terminal: 
         ```bash
-        streamlit run app.py
+        streamlit run synapser/app.py
         ```
     * This should automatically open Synapser in your web browser! 
 
