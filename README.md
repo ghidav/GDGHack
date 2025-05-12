@@ -15,7 +15,8 @@ Synapser tackles this by transforming solo study time into a **focused, guided, 
 
 Synapser creates a virtual classroom powered by AI. Interact with AI classmates and a guiding AI teacher to make learning dynamic and engaging.
 
-![Agent Architecture](<URL_to_Agent_Architecture_Image_if_available_online>) *(Agent Architecture Diagram from Technical Write-Up)* 
+![Agent Architecture](media/Agent_architecture.png)  
+*(Agent Architecture Diagram from Technical Write-Up)* 
 
 ### 🛠️ Tech Stack
 
