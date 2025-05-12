@@ -1,6 +1,0 @@
-google-adk
-dotenv
-replicate
-elevenlabs
-moviepy
-litellm
